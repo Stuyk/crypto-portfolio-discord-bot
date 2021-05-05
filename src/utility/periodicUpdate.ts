@@ -5,7 +5,9 @@ import { IPortfolio } from '../interfaces/IPortfolio';
 import { getDatabase } from '../utility/database';
 import { periodicPortfolio } from '../commands/portfolio';
 
+const TimeBetweenUpdates = 60000 * 3;
 let cachedMembers: Array<Discord.User> = [];
+let nextUpdate: number;
 
 export async function removeFromCache(id: string) {
     const index = cachedMembers.findIndex((x) => x.id === id);
@@ -18,6 +20,12 @@ export async function removeFromCache(id: string) {
 }
 
 export async function periodicUpdate() {
+    if (nextUpdate && Date.now() < nextUpdate) {
+        return;
+    }
+
+    nextUpdate = Date.now() + TimeBetweenUpdates;
+
     const db = await getDatabase();
     const portfolios: Array<IPortfolio> = await db.fetchAllByField('periodic', true, COLLECTIONS.CRYPTO);
 
