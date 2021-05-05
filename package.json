@@ -1,0 +1,27 @@
+{
+  "name": "crypto-portfolio-bot",
+  "version": "1.0.0",
+  "description": "A CryptoCurrency Discord Bot for Tracking Portfolios. Has Privacy.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node ./dist/index.js",
+    "watch": "tsc-watch --onSuccess \"node ./dist/index.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ascii-table": "^0.0.9",
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.6.0",
+    "image-charts": "^5.6.17",
+    "mongodb": "^3.6.6"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^3.6.12",
+    "@types/node": "^15.0.1",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.2.4"
+  }
+}

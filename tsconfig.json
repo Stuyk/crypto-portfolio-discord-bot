@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es5",
+      "esModuleInterop": true,
+      "moduleResolution": "node",
+      "allowJs": true,
+      "noImplicitAny": false,
+      "removeComments": false,
+      "preserveConstEnums": true,
+      "sourceMap": false,
+      "outDir": "dist",
+      "baseUrl": "."
+    },
+    "lib": ["ESNEXT"],
+    "include": ["src/**/*.ts", "tests/**/*.ts"],
+    "exclude": ["node_modules", ".vscode"]
+  }
