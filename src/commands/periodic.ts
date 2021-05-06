@@ -16,15 +16,23 @@ async function command(msg: Discord.Message) {
     }
     //User doesn't have a portfolio but a periodic Object. Create a portfolio for him.
     if (!data.portfolio && data.periodic) {
-        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: data.periodic}, true);
+        data = await db.insertData({
+            id: msg.author.id,
+            portfolio: {},
+            periodic: data.periodic
+        }, COLLECTIONS.CRYPTO, true);
     }
     //User doesn't have a periodic Object but a portfolio. Create a periodic Object for him.
     if (!data.periodic && data.portfolio) {
-        data = await db.insertData({id: msg.author.id, portfolio: data.portfolio, periodic: {}}, true);
+        data = await db.insertData({
+            id: msg.author.id,
+            portfolio: data.portfolio,
+            periodic: {}
+        }, COLLECTIONS.CRYPTO, true);
     }
     //User doesn't have either but has some other data stored. Create both for him.
     if (!data.periodic && !data.portfolio) {
-        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: {}}, true);
+        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: {}}, COLLECTIONS.CRYPTO, true);
     }
 
     data.periodic.state = !data.periodic.state;
