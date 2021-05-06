@@ -17,7 +17,7 @@ async function command(msg: Discord.Message) {
 
     data.periodic.state = !data.periodic.state;
     await db.updatePartialData(data._id, { periodic: data.periodic }, COLLECTIONS.CRYPTO);
-    msg.reply(`Enable Periodic Updates: ${data.periodic}`);
+    msg.reply(`Enable Periodic Updates: ${data.periodic.state}`);
     msg.delete();
 
     if (!data.periodic) {
