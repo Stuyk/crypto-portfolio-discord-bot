@@ -5,9 +5,9 @@ export interface IPortfolio {
     id?: string;
     privacy?: boolean;
     periodic?: {
-        state: boolean;
-        lastUpdate: Date;
-        interval: number;
+        state?: boolean;
+        lastUpdate?: Date;
+        interval?: number;
     };
     portfolio?: {
         [key: string]: number;
