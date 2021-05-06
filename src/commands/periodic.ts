@@ -1,22 +1,34 @@
 import * as Discord from 'discord.js';
-import { COLLECTIONS } from '../enums/collections';
-import { IPortfolio } from '../interfaces/IPortfolio';
-import { getDatabase } from '../utility/database';
-import { registerCommand } from '../service/commands';
-import { removeFromCache } from '../utility/periodicUpdate';
+import {COLLECTIONS} from '../enums/collections';
+import {IPortfolio} from '../interfaces/IPortfolio';
+import {getDatabase} from '../utility/database';
+import {registerCommand} from '../service/commands';
+import {removeFromCache} from '../utility/periodicUpdate';
 
-registerCommand({ name: 'periodic', command, description: 'Turn on periodic updates. Currently every 8 hours.' });
+registerCommand({name: 'periodic', command, description: 'Turn on periodic updates. Currently every 8 hours.'});
 
 async function command(msg: Discord.Message) {
     const db = await getDatabase();
 
     let data: IPortfolio = await db.fetchData('id', msg.author.id, COLLECTIONS.CRYPTO);
     if (!data) {
-        data = await db.insertData({ id: msg.author.id, portfolio: {}, periodic: {} }, COLLECTIONS.CRYPTO, true);
+        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: {}}, COLLECTIONS.CRYPTO, true);
+    }
+    //User doesn't have a portfolio but a periodic Object. Create a portfolio for him.
+    if (!data.portfolio && data.periodic) {
+        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: data.periodic}, true);
+    }
+    //User doesn't have a periodic Object but a portfolio. Create a periodic Object for him.
+    if (!data.periodic && data.portfolio) {
+        data = await db.insertData({id: msg.author.id, portfolio: data.portfolio, periodic: {}}, true);
+    }
+    //User doesn't have either but has some other data stored. Create both for him.
+    if (!data.periodic && !data.portfolio) {
+        data = await db.insertData({id: msg.author.id, portfolio: {}, periodic: {}}, true);
     }
 
     data.periodic.state = !data.periodic.state;
-    await db.updatePartialData(data._id, { periodic: data.periodic }, COLLECTIONS.CRYPTO);
+    await db.updatePartialData(data._id, {periodic: data.periodic}, COLLECTIONS.CRYPTO);
     msg.reply(`Enable Periodic Updates: ${data.periodic.state}`);
     msg.delete();
 
