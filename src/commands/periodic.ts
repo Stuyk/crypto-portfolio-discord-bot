@@ -12,7 +12,7 @@ async function command(msg: Discord.Message) {
 
     let data: IPortfolio = await db.fetchData('id', msg.author.id, COLLECTIONS.CRYPTO);
     if (!data) {
-        data = await db.insertData({ id: msg.author.id, portfolio: {} }, COLLECTIONS.CRYPTO, true);
+        data = await db.insertData({ id: msg.author.id, portfolio: {}, periodic: {} }, COLLECTIONS.CRYPTO, true);
     }
 
     data.periodic.state = !data.periodic.state;
