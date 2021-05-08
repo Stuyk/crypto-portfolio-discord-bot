@@ -14,18 +14,6 @@ if (!config.DATABASE_URL) {
     throw new Error(`Missing DATABASE_URL from env variables.`);
 }
 
-if (!config.DATABASE_NAME) {
-    throw new Error(`Missing DATABASE_NAME from env variables.`);
-}
-
-if (!config.DATABASE_USERNAME) {
-    throw new Error(`Missing DATABASE_USERNAME from env variables.`);
-}
-
-if (!config.DATABASE_PASSWORD) {
-    throw new Error(`Missing DATABASE_PASSWORD from env variables.`);
-}
-
 if (!config.DISCORD_BOT_TOKEN) {
     throw new Error(`Missing DISCORD_BOT_TOKEN from env variables.`);
 }

@@ -4,7 +4,7 @@ export interface IPrice {
     btc: number;
     price_24: number;
     price_24_percentage: number;
-    icon: string;
+    icon?: string;
     nextUpdate: number;
     name: string;
 }
