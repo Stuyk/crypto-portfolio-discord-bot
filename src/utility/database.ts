@@ -174,28 +174,6 @@ export class Database {
     }
 
     /**
-     * Fetch all with a specific field and a specific value.
-     * @param {string} objectName Object we want to find.
-     * @param {string} fieldName Field we want to find.
-     * @param {any} fieldValue Field value we want to find.
-     * @param {string} collection Name of the collection.
-     * @returns {Promise<Array<T>>} An array of documents.
-     * @template T
-     */
-    async fetchAllByObjectProperty(objectName, fieldName, fieldValue, collection) {
-        const results = await this.db
-            .collection(collection)
-            .find( { [`${objectName}.${fieldName}`]: fieldValue } )
-            .toArray();
-
-        if (results.length <= 0) {
-            return [];
-        }
-
-        return results;
-    }
-
-    /**
      * Insert a document and return the ID.
      * @param {T} document
      * @param {string} collection

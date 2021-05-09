@@ -51,7 +51,7 @@ client.on('message', (msg: Discord.Message) => {
         return;
     }
 
-    if (!msg.content.startsWith('!')) {
+    if (!msg.content.includes('!')) {
         return;
     }
 
