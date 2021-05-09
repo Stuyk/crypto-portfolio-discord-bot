@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js';
-import { getDiscordUser } from '../index';
-import { COLLECTIONS } from '../enums/collections';
-import { IPortfolio } from '../interfaces/IPortfolio';
-import { getDatabase } from '../utility/database';
-import { periodicPortfolio } from '../commands/portfolio';
+import {getDiscordUser} from '../index';
+import {COLLECTIONS} from '../enums/collections';
+import {IPortfolio} from '../interfaces/IPortfolio';
+import {getDatabase} from '../utility/database';
+import {periodicPortfolio} from '../commands/portfolio';
 
-const TimeBetweenUpdates = 60000 * 10; // 10 Minutes
+const TimeBetweenUpdates = 6000 * 10; // 1 Minute
 let cachedMembers: Array<Discord.User> = [];
 let nextUpdate: number;
 
@@ -34,6 +34,7 @@ export async function periodicUpdate() {
         if (!cachedMembers.find((member) => member.id === portfolio.id)) {
             const newMember = await getDiscordUser(portfolio.id);
             if (!newMember) {
+                console.log("Couldnt find discord member")
                 continue;
             }
             //Check if the Interval already passed
@@ -46,13 +47,11 @@ export async function periodicUpdate() {
                  if(Date.now() - portfolio.periodic.lastUpdate > portfolio.periodic.interval){
                      //User received periodic update. Set lastUpdate to now to prevent spam.
                      await db.updatePartialData(portfolio._id, {periodic: {... portfolio.periodic, lastUpdate: Date.now()}}, COLLECTIONS.CRYPTO);
+                     console.log("Interval passed!")
+                     console.log(portfolio.periodic.lastUpdate > portfolio.periodic.interval)
                      cachedMembers.push(newMember);
                  }
-                 
              }
-             // if (portfolio && portfolio.periodic && portfolio.periodic.lastUpdate && portfolio.periodic.lastUpdate - Date.now() < portfolio.periodic.interval) {
-             //    
-             // }
         }
     }
 
