@@ -47,8 +47,6 @@ export async function periodicUpdate() {
                  if(Date.now() - portfolio.periodic.lastUpdate > portfolio.periodic.interval){
                      //User received periodic update. Set lastUpdate to now to prevent spam.
                      await db.updatePartialData(portfolio._id, {periodic: {... portfolio.periodic, lastUpdate: Date.now()}}, COLLECTIONS.CRYPTO);
-                     console.log("Interval passed!")
-                     console.log(portfolio.periodic.lastUpdate > portfolio.periodic.interval)
                      cachedMembers.push(newMember);
                  }
              }
