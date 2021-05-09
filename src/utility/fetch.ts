@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { IGeckoCoin } from 'src/interfaces/IGeckoCoin';
 import { ICoin } from '../interfaces/ICoin';
 import { IPrice } from '../interfaces/IPrice';
 import { IToken } from '../interfaces/IToken';
@@ -9,9 +10,24 @@ let tokens: Array<IToken> = [];
 let prices: Array<IPrice> = [];
 
 let interval: NodeJS.Timeout;
+export async function fetchIconURL(price: IPrice): Promise<string> {
+    const response = await axios
+        .get(`https://api.coingecko.com/api/v3/coins/${price.name.toLowerCase().replace(/ /g, "")}`, {
+            params: { tickers: false, developer_data: false, community_data: false },
+        })
+        .catch((err) => {
+            return null;
+        });
+
+    if (!response || !response.data) {
+        return "";
+    }
+
+    return (response.data as IGeckoCoin).image?.large;
+}
 
 export async function fetchTokens() {
-    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/list`).catch((err) => {
+    const response = await axios.get(`https://api.coinpaprika.com/v1/coins`).catch((err) => {
         return null;
     });
 
@@ -20,7 +36,7 @@ export async function fetchTokens() {
     }
 
     tokens = response.data;
-    console.log('[BOT] List Updated');
+    console.log('[BOT] Token List Updated');
 }
 
 export function createUpdateInterval() {
@@ -46,8 +62,8 @@ function getTokenID(symbol: string): string | null {
 
 async function updateTicker(id: string): Promise<boolean> {
     const response = await axios
-        .get(`https://api.coingecko.com/api/v3/coins/${id}`, {
-            params: { tickers: false, developer_data: false, community_data: false },
+        .get(`https://api.coinpaprika.com/v1/tickers/${id}`, {
+            params: { quotes: "USD,BTC" }
         })
         .catch((err) => {
             return null;
@@ -57,30 +73,27 @@ async function updateTicker(id: string): Promise<boolean> {
         return false;
     }
 
-    const geckoData: ICoin = response.data;
+    const paprikaData: ICoin = response.data;
     const index = prices.findIndex((x) => x.id === id);
+
+    const priceData = {
+        id: id,
+        usd: paprikaData.quotes["USD"].price,
+        btc: paprikaData.quotes["BTC"].price,
+        price_24: paprikaData.quotes["USD"].price * ((paprikaData.quotes["USD"].percent_change_24h + 100) / 100 - 1),
+        price_24_percentage: paprikaData.quotes["USD"].percent_change_24h,
+        nextUpdate: Date.now() + 60000 * 3,
+        name: paprikaData.name
+    } as IPrice;
+
     if (index >= 0) {
         prices[index] = {
-            id: id,
-            usd: geckoData.market_data.current_price.usd,
-            btc: geckoData.market_data.current_price.btc,
-            price_24: geckoData.market_data.price_change_24h,
-            price_24_percentage: geckoData.market_data.price_change_percentage_24h,
-            icon: geckoData.image.large,
-            nextUpdate: Date.now() + 60000 * 3,
-            name: geckoData.name,
+            ...priceData,
+            icon: prices[index].icon
         };
     } else {
-        prices.push({
-            id: id,
-            usd: geckoData.market_data.current_price.usd,
-            btc: geckoData.market_data.current_price.btc,
-            price_24: geckoData.market_data.price_change_24h,
-            price_24_percentage: geckoData.market_data.price_change_percentage_24h,
-            icon: geckoData.image.large,
-            nextUpdate: Date.now() + 60000 * 3,
-            name: geckoData.name,
-        });
+        prices.push(priceData);
+        priceData.icon = await fetchIconURL(priceData);
     }
 
     return true;

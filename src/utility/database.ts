@@ -63,23 +63,11 @@ export class Database {
         this.collections = collections;
         this.databaseName = databasename;
 
-        if (username && password) {
-            console.log(`[MongoDB] Establishing connection with username and password.`);
-            this.client = new MongoClient(url, {
-                useUnifiedTopology: true,
-                useNewUrlParser: true,
-                auth: {
-                    user: username,
-                    password: password,
-                },
-            });
-        } else {
-            console.log(`[MongoDB] Establishing connection without using a username or password.`);
-            this.client = new MongoClient(url, {
-                useUnifiedTopology: true,
-                useNewUrlParser: true,
-            });
-        }
+        console.log(`[MongoDB] Establishing connection.`);
+        this.client = new MongoClient(url, {
+            useUnifiedTopology: true,
+            useNewUrlParser: true
+        });
 
         this.establishConnection();
     }
