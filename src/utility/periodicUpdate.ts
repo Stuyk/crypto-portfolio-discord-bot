@@ -36,8 +36,22 @@ export async function periodicUpdate() {
             if (!newMember) {
                 continue;
             }
-
-            cachedMembers.push(newMember);
+            //Check if the Interval in hours already passed
+             if(portfolio && portfolio.periodic) {
+                 if(!portfolio.periodic.lastUpdate){
+                     //Periodic Update has never passed set lastUpdate to now.
+                     await db.updatePartialData(portfolio._id, {periodic: {... portfolio.periodic, lastUpdate: Date.now()}}, COLLECTIONS.CRYPTO);
+                     return;
+                 }
+                 if(Date.now() - portfolio.periodic.lastUpdate > portfolio.periodic.interval){
+                     console.log("Interval passed!")
+                     cachedMembers.push(newMember);
+                 }
+                 
+             }
+             // if (portfolio && portfolio.periodic && portfolio.periodic.lastUpdate && portfolio.periodic.lastUpdate - Date.now() < portfolio.periodic.interval) {
+             //    
+             // }
         }
     }
 
