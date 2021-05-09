@@ -58,6 +58,7 @@ export async function periodicUpdate() {
 
     for (let i = 0; i < cachedMembers.length; i++) {
         periodicPortfolio(cachedMembers[i]);
+        cachedMembers.splice(i, 1);
     }
 
     console.log(`Periodic Update Subscribers: ${cachedMembers.length}`);
