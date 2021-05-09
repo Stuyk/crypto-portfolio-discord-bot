@@ -27,8 +27,8 @@ export async function periodicUpdate() {
     nextUpdate = Date.now() + TimeBetweenUpdates;
 
     const db = await getDatabase();
-    const portfolios: Array<IPortfolio> = await db.fetchAllByField('periodic', true, COLLECTIONS.CRYPTO);
-
+    const portfolios: Array<IPortfolio> = await db.fetchAllByObjectProperty("periodic", "state", true, COLLECTIONS.CRYPTO);
+    
     for (let i = 0; i < portfolios.length; i++) {
         const portfolio = portfolios[i];
         if (!cachedMembers.find((member) => member.id === portfolio.id)) {
