@@ -23,14 +23,14 @@ async function command(msg: Discord.Message) {
     }
     //User doesn't have a periodic Object but a portfolio. Create a periodic Object for him.
     if (!data.periodic && data.portfolio) {
-        await db.updatePartialData(data._id, {periodic: {}}, COLLECTIONS.CRYPTO);
+        await db.updatePartialData(data._id, {periodic: {state: false, interval: 60000 * 60 * 3, lastUpdate: null}}, COLLECTIONS.CRYPTO);
 
         //Re-Fetch Data so we can access the new objects.
         data = await db.fetchData('id', msg.author.id, COLLECTIONS.CRYPTO);
     }
     //User doesn't have either but has some other data stored. Create both for him.
     if (data && !data.periodic && !data.portfolio) {
-        await db.updatePartialData(data._id, {periodic: {}}, COLLECTIONS.CRYPTO); //Create Empty Portfolio
+        await db.updatePartialData(data._id, {periodic: {state: false, interval: 60000 * 60 * 3, lastUpdate: null}}, COLLECTIONS.CRYPTO); //Create Empty Portfolio
         await db.updatePartialData(data._id, {portfolio: {}}, COLLECTIONS.CRYPTO); //Create Empty Periodic Object
 
         //Re-Fetch Data so we can access the new objects.
