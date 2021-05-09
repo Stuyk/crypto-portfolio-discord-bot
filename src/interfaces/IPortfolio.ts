@@ -6,7 +6,7 @@ export interface IPortfolio {
     privacy?: boolean;
     periodic?: {
         state?: boolean;
-        lastUpdate?: Date;
+        lastUpdate?: number;
         interval?: number;
     };
     portfolio?: {
