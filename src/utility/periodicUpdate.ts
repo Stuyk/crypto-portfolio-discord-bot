@@ -36,7 +36,7 @@ export async function periodicUpdate() {
             if (!newMember) {
                 continue;
             }
-            //Check if the Interval in hours already passed
+            //Check if the Interval already passed
              if(portfolio && portfolio.periodic) {
                  if(!portfolio.periodic.lastUpdate){
                      //Periodic Update has never passed set lastUpdate to now.
