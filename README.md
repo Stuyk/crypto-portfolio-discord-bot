@@ -21,8 +21,6 @@ This uses environment variables. You either use a `.env` file or pass environmen
 ```
 DATABASE_URL=''
 DATABASE_NAME=''
-DATABASE_USERNAME=''
-DATABASE_PASSWORD=''
 DISCORD_BOT_TOKEN=''
 ```
 
