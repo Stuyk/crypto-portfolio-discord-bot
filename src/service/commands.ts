@@ -1,7 +1,7 @@
 import { ICommand } from '../interfaces/ICommand';
-import path from 'path';
-import fs from 'fs';
-import Discord from 'discord.js';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as Discord from 'discord.js';
 
 const commands: Array<ICommand> = [
     {

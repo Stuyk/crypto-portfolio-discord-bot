@@ -1,6 +1,6 @@
 {
   "name": "crypto-portfolio-bot",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A CryptoCurrency Discord Bot for Tracking Portfolios. Has Privacy.",
   "main": "dist/index.js",
   "scripts": {
@@ -23,5 +23,6 @@
     "@types/node": "^15.0.1",
     "tsc-watch": "^4.2.9",
     "typescript": "^4.2.4"
-  }
+  },
+  "module": "commonjs"
 }

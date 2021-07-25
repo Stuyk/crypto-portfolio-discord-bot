@@ -1,8 +1,9 @@
+import { periodicUpdate } from './periodicUpdate';
 import axios from 'axios';
+
 import { ICoin } from '../interfaces/ICoin';
 import { IPrice } from '../interfaces/IPrice';
 import { IToken } from '../interfaces/IToken';
-import { periodicUpdate } from './periodicUpdate';
 
 const UpdateEvery = 60000;
 let tokens: Array<IToken> = [];
@@ -44,71 +45,37 @@ function getTokenID(symbol: string): string | null {
     return result ? result.id : null;
 }
 
-async function updateTicker(id: string): Promise<boolean> {
+export async function getTicker(id: string): Promise<IPrice> {
+    let tickerData;
+
+    if (id.toLowerCase() !== 'fox') {
+        tickerData = tokens.find(x => x.symbol.toLocaleLowerCase() === id.toLocaleLowerCase());
+    } else {
+        tickerData = tokens.find(x => x.symbol.toLocaleLowerCase() === id.toLocaleLowerCase() && x.id === 'shapeshift-fox-token');
+    }
+
     const response = await axios
-        .get(`https://api.coingecko.com/api/v3/coins/${id}`, {
+        .get(`https://api.coingecko.com/api/v3/coins/${tickerData.id}`, {
             params: { tickers: false, developer_data: false, community_data: false },
         })
         .catch((err) => {
+            console.log(err);
             return null;
         });
 
     if (!response || !response.data) {
-        return false;
-    }
-
-    const geckoData: ICoin = response.data;
-    const index = prices.findIndex((x) => x.id === id);
-    if (index >= 0) {
-        prices[index] = {
-            id: id,
-            usd: geckoData.market_data.current_price.usd,
-            btc: geckoData.market_data.current_price.btc,
-            price_24: geckoData.market_data.price_change_24h,
-            price_24_percentage: geckoData.market_data.price_change_percentage_24h,
-            icon: geckoData.image.large,
-            nextUpdate: Date.now() + 60000 * 3,
-            name: geckoData.name,
-        };
-    } else {
-        prices.push({
-            id: id,
-            usd: geckoData.market_data.current_price.usd,
-            btc: geckoData.market_data.current_price.btc,
-            price_24: geckoData.market_data.price_change_24h,
-            price_24_percentage: geckoData.market_data.price_change_percentage_24h,
-            icon: geckoData.image.large,
-            nextUpdate: Date.now() + 60000 * 3,
-            name: geckoData.name,
-        });
-    }
-
-    return true;
-}
-
-async function getTokenPrice(id: string): Promise<IPrice | null> {
-    let token = prices.find((token) => token.id === id);
-
-    if ((token && Date.now() > token.nextUpdate) || !token) {
-        const didUpdate = await updateTicker(id);
-
-        if (!token && !didUpdate) {
-            return null;
-        }
-
-        if (!token) {
-            token = prices.find((token) => token.id === id);
-        }
-    }
-
-    return token;
-}
-
-export async function fetchTickerPrice(ticker: string): Promise<IPrice | null> {
-    const token = getTokenID(ticker);
-    if (!token) {
         return null;
     }
 
-    return await getTokenPrice(token);
+    const geckoData: ICoin = response.data;
+    return {
+        id: id,
+        usd: geckoData.market_data.current_price.usd,
+        btc: geckoData.market_data.current_price.btc,
+        price_24: geckoData.market_data.price_change_24h,
+        price_24_percentage: geckoData.market_data.price_change_percentage_24h,
+        icon: geckoData.image.large,
+        nextUpdate: Date.now() + 60000 * 3,
+        name: geckoData.name,
+    }
 }

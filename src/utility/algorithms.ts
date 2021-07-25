@@ -1,6 +1,7 @@
-import { IPortfolio, IPortfolioCurrent, IPortfolioFull } from '../interfaces/IPortfolio';
-import { fetchTickerPrice } from './fetch';
 import ImageCharts from 'image-charts';
+
+import { IPortfolio, IPortfolioCurrent, IPortfolioFull } from '../interfaces/IPortfolio';
+import { getTicker } from '../utility/fetch';
 
 const HistoryUpdateTimeDiff = 60000 * 5; // 5 Minutes Minimum
 
@@ -56,7 +57,7 @@ export async function getPortfolioStats(data: IPortfolio): Promise<IPortfolioFul
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const amount = data.portfolio[key];
-        const price = await fetchTickerPrice(key);
+        const price = await getTicker(key);
 
         // Setup Price History if Non Existant
         if (!data.history[key]) {

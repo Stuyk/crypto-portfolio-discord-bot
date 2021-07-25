@@ -1,11 +1,15 @@
-import Discord from 'discord.js';
-import { Database, onReady } from './utility/database';
-import { fetchTokens, createUpdateInterval, fetchTickerPrice } from './utility/fetch';
+import * as Discord from 'discord.js';
+import * as dotenv from 'dotenv';
+
 import { COLLECTIONS } from './enums/collections';
-import { getCommand, propogateCommands } from './service/commands';
-import { periodicUpdate } from './utility/periodicUpdate';
-import dotenv from 'dotenv';
 import { IConfig } from './interfaces/IConfig';
+import { getCommand, propogateCommands } from './service/commands';
+import { Database, onReady } from './utility/database';
+import { createUpdateInterval, fetchTokens } from './utility/fetch';
+import { periodicUpdate } from './utility/periodicUpdate';
+
+import './enums/collections';
+import './utility/fetch';
 
 const config: IConfig = dotenv.config().parsed as IConfig;
 const cwd = require.main.path;
@@ -16,14 +20,6 @@ if (!config.DATABASE_URL) {
 
 if (!config.DATABASE_NAME) {
     throw new Error(`Missing DATABASE_NAME from env variables.`);
-}
-
-if (!config.DATABASE_USERNAME) {
-    throw new Error(`Missing DATABASE_USERNAME from env variables.`);
-}
-
-if (!config.DATABASE_PASSWORD) {
-    throw new Error(`Missing DATABASE_PASSWORD from env variables.`);
 }
 
 if (!config.DISCORD_BOT_TOKEN) {
@@ -44,12 +40,6 @@ const client = new Discord.Client({ ws: { intents: new Discord.Intents(Discord.I
 
 client.on('ready', async () => {
     await fetchTokens();
-    await fetchTickerPrice('BTC');
-    await fetchTickerPrice('ETH');
-    await fetchTickerPrice('LTC');
-    await fetchTickerPrice('LINK');
-    await fetchTickerPrice('DOGE');
-    await fetchTickerPrice('ADA');
     createUpdateInterval();
     periodicUpdate();
 });

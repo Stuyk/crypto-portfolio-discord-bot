@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js';
+
 import { registerCommand } from '../service/commands';
-import { fetchTickerPrice } from '../utility/fetch';
+import { getTicker } from '../utility/fetch';
 
 registerCommand({ name: 'price', command, description: '<ticker>' });
 
@@ -16,7 +17,7 @@ async function command(msg: Discord.Message, ticker: string) {
     embed.setDescription('Please wait while I fetch this price...');
 
     const newMessage = await msg.reply(embed);
-    const currentPrice = await fetchTickerPrice(ticker);
+    const currentPrice = await getTicker(ticker);
     if (!currentPrice) {
         embed.setDescription('Could not track this token.');
         embed.setThumbnail('');

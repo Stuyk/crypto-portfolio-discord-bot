@@ -1,9 +1,10 @@
 import * as Discord from 'discord.js';
-import { registerCommand } from '../service/commands';
+import { getTicker } from '../utility/fetch';
+
 import { COLLECTIONS } from '../enums/collections';
 import { IPortfolio } from '../interfaces/IPortfolio';
+import { registerCommand } from '../service/commands';
 import { getDatabase } from '../utility/database';
-import { fetchTickerPrice } from '../utility/fetch';
 
 registerCommand({ name: 'add', command, description: '<ticker> <amount> - Add to your portfolio.' });
 
@@ -16,7 +17,7 @@ async function command(msg: Discord.Message, ticker: string, amount: any) {
     }
 
     ticker = ticker.toLowerCase();
-    const isTicker = await fetchTickerPrice(ticker);
+    const isTicker = await getTicker(ticker);
     if (!isTicker) {
         msg.reply(`$${ticker} is not a valid ticker.`);
         return;

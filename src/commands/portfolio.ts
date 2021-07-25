@@ -1,10 +1,11 @@
+import AsciiTable from 'ascii-table';
 import * as Discord from 'discord.js';
+
 import { COLLECTIONS } from '../enums/collections';
 import { IPortfolio, IPortfolioFull } from '../interfaces/IPortfolio';
-import { getDatabase } from '../utility/database';
-import { getPortfolioStats, updatePortfolio } from '../utility/algorithms';
-import AsciiTable from 'ascii-table';
 import { registerCommand } from '../service/commands';
+import { getPortfolioStats, updatePortfolio } from '../utility/algorithms';
+import { getDatabase } from '../utility/database';
 
 export async function periodicPortfolio(member: Discord.User) {
     const db = await getDatabase();
@@ -14,7 +15,7 @@ export async function periodicPortfolio(member: Discord.User) {
         data = await db.insertData({ id: member.id, portfolio: {} }, COLLECTIONS.CRYPTO, true);
     }
 
-    member.send(`Hi, here is your periodic update.`);
+    await member.send(`Fetching Portfolio...`);
 
     const descriptions = await portfolioHandler(data, true);
     for (let i = 0; i < descriptions.length; i++) {
@@ -72,7 +73,7 @@ async function portfolioHandler(data: IPortfolio, isLarge: boolean = false): Pro
 
             if (!noHeading) {
                 if (isLarge) {
-                    portfolioTable.setHeading('$', `AMOUNT`, `TOTAL`, `COIN`, `+/-`);
+                    portfolioTable.setHeading('$', `AMOUNT`, `TOTAL`, `COIN`);
                 } else {
                     portfolioTable.setHeading('$', `AMOUNT`, `TOTAL`);
                 }
@@ -91,8 +92,7 @@ async function portfolioHandler(data: IPortfolio, isLarge: boolean = false): Pro
                 coin.ticker.toUpperCase(),
                 fixedAmount,
                 `$${fixedValue}`,
-                `$${coin.price}`,
-                `${fixedDiff}`
+                `$${coin.price}`
             );
         } else {
             portfolioTable.addRow(coin.ticker.toUpperCase(), fixedAmount, `$${fixedValue}`);
@@ -122,9 +122,9 @@ async function portfolioHandler(data: IPortfolio, isLarge: boolean = false): Pro
     }
 
     const totalsTable = new AsciiTable();
-    totalsTable.setHeading(`TOTAL`, `DIFF ($)`);
+    totalsTable.setHeading(`TOTAL`);
     totalsTable.setHeadingAlign(AsciiTable.RIGHT);
-    totalsTable.addRow(`$${parseFloat(stats.total.toFixed(2)).toLocaleString()}`, `${stats.diff.toFixed(2)}`);
+    totalsTable.addRow(`$${parseFloat(stats.total.toFixed(2)).toLocaleString()}`);
 
     description += totalsTable.toString();
     description += '```';
